@@ -10,7 +10,7 @@ import subprocess as sub
 
 from datetime import datetime
 
-
+FolderNameToWatchForFileChanges = "/var/www/html/foldername/"
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 import random
@@ -36,16 +36,13 @@ def subprocess_cmd(command):
 
 
 def runTests(filename):
-
-
-
     command = ["codecept",
                 "run", "unit"
     ]
     for cmd in command:
         print(cmd, end=" ")
 
-    result = subprocess_cmd('cd /var/www/html/foldername/; codecept run unit --debug')
+    result = subprocess_cmd('cd' + FolderNameToWatchForFileChanges + '; codecept run unit --debug')
 
 
     print("o/p is " + str(result))
@@ -73,9 +70,6 @@ class MyHandler(FileSystemEventHandler):
     def on_modified(self, event):
         _check_modification(event.src_path)
 
-
-
-
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s - %(message)s',
@@ -83,7 +77,7 @@ if __name__ == "__main__":
     path = sys.argv[1] if len(sys.argv) > 1 else '.'
     event_handler = MyHandler()
     observer = Observer()
-    observer.schedule(event_handler, "/var/www/html/foldername/", recursive=True)
+    observer.schedule(event_handler, FolderNameToWatchForFileChanges, recursive=True)
     observer.start()
     print("phpunit test watcher started -- GROWL --- ")
     try:
